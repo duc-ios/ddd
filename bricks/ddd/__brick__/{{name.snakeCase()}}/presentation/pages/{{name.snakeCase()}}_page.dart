@@ -20,7 +20,12 @@ import '../widgets/{{name.snakeCase()}}_body.dart';
         appBar: AppBar(),
         body: BlocListener<{{name.pascalCase()}}Cubit, {{name.pascalCase()}}State>(
           listener: (context, state) => state.status
-              .whenOrNull(error: (error) => context.showApiError(error)),
+              .whenOrNull(
+                error: (error) async {
+                  await context.showApiError(error);
+                  getIt<{{name.pascalCase()}}Cubit>().onLoaded();
+                },
+              ),
           child: const {{name.pascalCase()}}Body(),
         ),
       ),
@@ -31,11 +36,16 @@ import '../widgets/{{name.snakeCase()}}_body.dart';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final provider = {{name.camelCase()}}Provider;
     ref.listen(
-      {{name.camelCase()}}Provider,
+      provider,
       (_, current) => current.status
-          .whenOrNull(error: (error) => context.showApiError(error)),
-    );
+          .whenOrNull(
+            error: (error) async {
+              await context.showApiError(error);
+              ref.read(provider.bloc).onLoaded();
+            },
+          );
     return Scaffold(
       appBar: AppBar(),
       body: const {{name.pascalCase()}}Body(),

@@ -20,6 +20,8 @@ class {{name.pascalCase()}}Cubit extends Cubit<{{name.pascalCase()}}State> with 
   final {{name.pascalCase()}}Repository _repository;
 
   {{name.pascalCase()}}Cubit(this._repository) : super(const {{name.pascalCase()}}State());
+  
+  void onLoaded() => emit(state.copyWith(status: const _LoadedStatus()));
 
   get() async {
     emit(state.loading);
